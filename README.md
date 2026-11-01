@@ -11,11 +11,13 @@ pkg install termux-api           # optional, plus the Termux:API Android app, fo
 termux-setup-storage             # optional, for ~/storage access
 
 tar xzf termux-ai.tar.gz && cd termux_ai
-pip install -e .                 # installs textual, rich, httpx and the `termux-ai` command
+sh install.sh                    # one step: downloads python + all modules (or: pip install -e .)
 ollama serve &                   # if Ollama isn't already running
 ollama pull qwen2.5:3b           # any model; small ones are best on a phone
 termux-ai                        # or: python -m termux_ai
 ```
+
+If any module is missing, `termux-ai` downloads it automatically on first run.
 
 Ollama must be reachable at `http://127.0.0.1:11434` (override with `OLLAMA_HOST` or Settings). The first installed model is picked automatically; change it with `/model <name>`.
 

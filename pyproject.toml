@@ -19,7 +19,7 @@ monitor = ["psutil>=5.9"]
 dev = ["pytest", "pytest-asyncio"]
 
 [project.scripts]
-termux-ai = "termux_ai.app:main"
+termux-ai = "termux_ai.__main__:run"
 
 [tool.setuptools]
 packages = ["termux_ai"]
