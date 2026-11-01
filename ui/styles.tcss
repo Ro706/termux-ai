@@ -68,3 +68,16 @@ Footer {
     width: 12;
     margin-left: 1;
 }
+
+
+#globe_clock {
+    height: 13;
+    min-height: 13;
+    width: 100%;
+    margin-top: 1;
+    padding: 0 1;
+    border: round #1c5262;
+    background: #081722;
+    content-align: center middle;
+    text-align: center;
+}

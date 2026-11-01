@@ -8,7 +8,7 @@ A starter TUI assistant for Android Termux using Python, Textual, Ollama, and SQ
 - System snapshot (best-effort Android/Termux detection)
 - SQLite conversation history and task log
 - RSS news feed reader
-- Explicit `/run COMMAND` workflow with a safety filter and explicit approval dialog
+- Explicit `/run COMMAND` workflow with a safety filter and approval dialog placeholder
 - Configurable Ollama endpoint and model
 
 ## Important safety note
@@ -62,3 +62,7 @@ Edit `config/settings.json`:
 - RSS feeds require internet access.
 - Long-term memory currently stores conversation history and task records; semantic retrieval and project-specific memory are planned next.
 - Some Termux API details require the separate Termux:API Android app and `termux-api` package.
+
+
+## Animated dashboard widget
+The dashboard includes a lightweight rotating ASCII globe and live device-local date/time. It uses Textual timers and does not require image assets or internet access.

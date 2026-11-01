@@ -11,6 +11,7 @@ from memory.database import MemoryDB
 from system.info import system_snapshot
 from tools.command_executor import validate_command, run_command
 from news.fetcher import fetch_news
+from ui.widgets import GlobeClock
 
 BASE = Path(__file__).resolve().parents[1]
 SETTINGS = json.loads((BASE / "config" / "settings.json").read_text())
@@ -53,6 +54,7 @@ class TermuxAIApp(App):
                 yield Static("Commands:\n/help\n/system\n/news\n/lasttask\n/run COMMAND\n/model NAME", id="help")
             with Vertical(id="content"):
                 yield Static("Loading system status…", id="status")
+                yield GlobeClock(id="globe_clock")
                 with ScrollableContainer(id="chat_area"):
                     yield RichLog(id="chat_log", wrap=True, markup=True, auto_scroll=True)
                 with Horizontal(id="composer"):
