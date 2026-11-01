@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "termux-ai"
+version = "0.1.0"
+description = "Personal Ollama-powered AI agent with a Textual TUI for Termux"
+requires-python = ">=3.11"
+dependencies = [
+    "textual>=0.86",
+    "rich>=13.7",
+    "httpx>=0.27",
+]
+
+[project.optional-dependencies]
+# psutil is optional: Termux often needs `pkg install python-psutil`, and the app falls back to /proc and shell tools.
+monitor = ["psutil>=5.9"]
+dev = ["pytest", "pytest-asyncio"]
+
+[project.scripts]
+termux-ai = "termux_ai.app:main"
+
+[tool.setuptools]
+packages = ["termux_ai"]
