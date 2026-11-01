@@ -1,0 +1,12 @@
+{
+  "ollama_url": "http://127.0.0.1:11434",
+  "model": "gemma3:1b",
+  "request_timeout": 180,
+  "max_history_messages": 12,
+  "monitor_refresh_seconds": 5,
+  "news_feeds": [
+    "https://www.theverge.com/rss/index.xml",
+    "https://feeds.feedburner.com/TheHackersNews",
+    "https://www.bleepingcomputer.com/feed/"
+  ]
+}

@@ -1,0 +1,5 @@
+textual>=1.0.0
+rich>=13.7.0
+httpx>=0.27.0
+psutil>=5.9.8
+feedparser>=6.0.11
