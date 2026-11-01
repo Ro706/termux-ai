@@ -13,6 +13,7 @@ import platform
 import re
 import shutil
 import subprocess
+import time
 from dataclasses import dataclass, field
 
 try:
@@ -33,6 +34,13 @@ def _run(argv: list[str], timeout: float = 4.0) -> str:
 
 def _prop(name: str) -> str:
     return _run(["getprop", name])
+
+
+def _kernel() -> str:
+    try:
+        return os.uname().release
+    except Exception:
+        return _run(["uname", "-r"]) or platform.release() or "n/a"
 
 
 def _fmt_bytes(n: float) -> str:
@@ -107,11 +115,24 @@ def _cpu_percent() -> float | None:
             return float(v)
         except Exception:
             pass
-    # fallback: load average relative to core count
+    # fallback 1: sample /proc/stat (often blocked on Android 10+)
+    try:
+        def _read():
+            with open("/proc/stat") as f:
+                v = [int(x) for x in f.readline().split()[1:]]
+            return sum(v), v[3] + (v[4] if len(v) > 4 else 0)
+        t1, i1 = _read()
+        time.sleep(0.2)
+        t2, i2 = _read()
+        if t2 > t1:
+            return max(0.0, min(100.0, (1 - (i2 - i1) / (t2 - t1)) * 100))
+    except Exception:
+        pass
+    # fallback 2: load average (not available on every Android Python build)
     try:
         load1 = os.getloadavg()[0]
         return min(100.0, load1 / max(os.cpu_count() or 1, 1) * 100)
-    except OSError:
+    except Exception:
         return None
 
 
@@ -231,7 +252,7 @@ def static_info() -> dict:
     return {
         "device": f"{brand} {dev}".strip().title() if dev else platform.node() or "n/a",
         "android": _prop("ro.build.version.release") or "n/a",
-        "kernel": platform.release() or "n/a",
+        "kernel": _kernel(),
         "arch": platform.machine() or "n/a",
         "cpu_model": model,
         "cpu_cores": cores,
@@ -241,21 +262,28 @@ def static_info() -> dict:
     }
 
 
+def _safe(fn, default):
+    try:
+        return fn()
+    except Exception:
+        return default
+
+
 def snapshot(static: dict | None = None) -> SystemSnapshot:
-    s = SystemSnapshot(**(static or static_info()))
-    s.cpu_percent = _cpu_percent()
-    mem = _memory()
+    s = SystemSnapshot(**(static or _safe(static_info, {})))
+    s.cpu_percent = _safe(_cpu_percent, None)
+    mem = _safe(_memory, None)
     if mem:
         total, avail, used = mem
         s.ram_total, s.ram_available, s.ram_used = _fmt_bytes(total), _fmt_bytes(avail), _fmt_bytes(used)
         s.ram_percent = used / total * 100 if total else None
-    st = _storage()
+    st = _safe(_storage, None)
     if st:
         total, used = st
         s.storage_total, s.storage_used = _fmt_bytes(total), _fmt_bytes(used)
         s.storage_percent = used / total * 100 if total else None
-    s.battery_percent, s.battery_status, s.battery_temp = _battery()
-    s.network = _network()
+    s.battery_percent, s.battery_status, s.battery_temp = _safe(_battery, (None, "n/a", None))
+    s.network = _safe(_network, "n/a")
     return s
 
 

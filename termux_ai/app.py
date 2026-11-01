@@ -268,7 +268,10 @@ class TermuxAI(App):
     # ---------------------------------------------------------- polling
     @work(exclusive=True, group="sys")
     async def _poll_system(self) -> None:
-        self.snapshot = await sysinfo.snapshot_async(self.agent.static)
+        try:
+            self.snapshot = await sysinfo.snapshot_async(self.agent.static)
+        except Exception:
+            pass  # keep the last good snapshot
 
     async def _poll_ollama(self) -> None:
         self.ollama_up = await self.ollama.is_up()

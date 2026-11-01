@@ -9,7 +9,7 @@ if command -v pkg >/dev/null 2>&1; then
   pkg install -y python-psutil termux-api 2>/dev/null || echo "(optional psutil/termux-api not installed; app still works)"
 fi
 
-python -m pip install --upgrade pip
+# Termux forbids upgrading pip, so we only install the app and its modules
 python -m pip install -e .
 
 echo
